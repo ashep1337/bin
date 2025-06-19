@@ -1,0 +1,21 @@
+#!/bin/bash
+
+netman=$(sudo systemctl status NetworkManager | grep Active | awk '{print $2}')
+ping=$(ping -c 4 google.com | grep "4 received" | awk -F, '{print $2}')
+
+if [[ "$netman" == "active" ]]; then
+	echo "Stopping Network Manager"
+	sudo systemctl stop NetworkManager
+else 
+	echo "Network Manager not running"
+fi
+
+echo "Stopping network interfaces"
+sudo ifdown -a &> /dev/null
+	
+echo "Starting network interfaces" 
+sudo ifup -a &> /dev/null
+
+if [[ "$ping" == " 4 received"  ]]; then
+	echo "Network is Connected"
+fi
