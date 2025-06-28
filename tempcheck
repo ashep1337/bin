@@ -9,4 +9,3 @@ echo "Current Temp: $temp"
 if [ "$temp" -gt 30 ]; then
 	kdialog --title "CPU TEMP WARNING" --msgbox "CPU temp is too high! " 2>/dev/null &
 fi
-#edit
