@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Get uptime
+
+printf "Uptime - "
+uptime -p | sed -E 's/^up //; s/day/d/g; s/hours/hr/g; s/minutes/min/g; s/([0-9]+) /\1/g'
+
+
+# Get ram usage
+
+ramused=$(free -h | awk '{print $3}' | awk 'NR==2' | cut -d"G" -f1) 
+ramtotal=$(free -h | awk '{print $2}' | awk 'NR==2')
+printf "Ram - "$ramused"/"$ramtotal" \n" 
+
+# Get temps
+
+printf "CPU Temp - "
+sensors | awk -F ':' '{print $2}' | awk 'NR==3' | cut -d'C' -f1 | cut -d'+' -f2 | xargs
+printf "GPU Temp - "
+sensors | awk -F ':' '{print $2}' | awk 'NR==19' | cut -d'C' -f1 | cut -d'+' -f2 | xargs
+printf "NVME Temp - "
+sensors | awk -F ':' '{print $2}' | awk 'NR==45' | cut -d'C' -f1 | cut -d'+' -f2 | xargs
+

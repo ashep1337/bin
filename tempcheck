@@ -1,0 +1,12 @@
+#!/bin/bash
+
+temp=$("$HOME/dev/bin/temp" | grep CPU | cut -d'-' -f2 | sed 's/ //' | cut -d'.' -f1)
+temp1=$("$HOME/dev/bin/temp")
+
+echo "Current Temp: $temp"
+
+
+if [ "$temp" -gt 30 ]; then
+	kdialog --title "CPU TEMP WARNING" --msgbox "CPU temp is too high! " 2>/dev/null &
+fi
+
