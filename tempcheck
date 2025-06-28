@@ -1,13 +1,17 @@
 #!/bin/bash
 
+export XDG_RUNTIME_DIR="/run/user/1000"
+export DISPLAY=:0
+export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/1000/bus"
+
 temp=$("$HOME/dev/bin/temp" | grep CPU | cut -d'-' -f2 | sed 's/ //' | cut -d'.' -f1)
-temp1=$("$HOME/dev/bin/temp")
 
-echo "Current Temp: $temp"
+echo "$temp"
+echo "$temp" >> /tmp/cputemp.txt
 
-
-if [ "$temp" -gt 30 ]; then
-	kdialog --title "CPU TEMP WARNING" --msgbox "CPU temp is too high! " 2>/dev/null &
+if [ "$temp" -gt 80 ]; then
+	/usr/bin/kdialog --title "CPU TEMP WARNING" --msgbox "CPU temp is too high! " 2>/dev/null &
 fi
 
-#test
+tail -n 100 cputemp.txt > cputemp.txt.tmp && mv cputemp.txt.tmp cputemp.txt
+

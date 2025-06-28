@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source /home/ashep/bin/matplot/bin/activate
+python3 /home/ashep/bin/matplot/bin/plot_temp.py
+
