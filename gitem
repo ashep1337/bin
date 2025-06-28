@@ -1,0 +1,4 @@
+#!/bin/bash
+
+git add * | sleep 2 && git commit -m "automated commit" | sleep 2 && git push origin main
+
