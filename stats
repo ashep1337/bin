@@ -7,18 +7,6 @@
 
 # This is keybound to ctrl + t on my system so it pops up a notifcation when the keybind is pressed with basic temp/uptime info about the system.
 
-# commands to use to track everything
-#
-# journalctl --user -r temp.service -f
-# systemctl --user restart temp.service
-# systemctl --user daemon-reload
-# cat /tmp/cputemp.txt
-#
-# temp
-# tempcheck
-# plottemp
-# stats
-
 
 uptime=$(uptime -p | sed -E 's/^up //; s/day/d/g; s/hours/hr/g; s/minutes/min/g; s/([0-9]+) /\1/g')
 cputemp=$(sensors | awk -F ':' '{print $2}' | awk 'NR==3' | cut -d'C' -f1 | cut -d'+' -f2 | xargs)
@@ -41,9 +29,9 @@ printf "CPU Temp - $cputemp \n"
 printf "GPU Temp - $gputemp \n"
 printf "NVME Temp - $nvmetemp \n "
 
-#notify-send "Stats" " 
-#====================================\n
-#    - Uptime - $uptime \n
-#    - CPU Temp - $cputemp \n
-#   - GPU Temp - $gputemp \n
-#    - NVME Temp - $nvmetemp \n"
+notify-send "Stats" " 
+====================================\n
+    - Uptime - $uptime \n
+    - CPU Temp - $cputemp \n
+    - GPU Temp - $gputemp \n
+    - NVME Temp - $nvmetemp \n"
