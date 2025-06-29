@@ -1,0 +1,10 @@
+[Unit]
+Description=Temp tracking and logging
+
+
+[Service]
+Type=simple
+Environment=DISPLAY=:0
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+ExecStart=/home/ashep/bin/tempcheck
+

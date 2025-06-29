@@ -1,0 +1,5 @@
+#!/bin/bash
+
+if [ "$(sudo virsh list --all | grep debian | awk '{print $3}')" = "shut" ]; then 
+    sudo virsh start debiantesting 
+fi
