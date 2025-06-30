@@ -1,0 +1,27 @@
+#!/bin/bash
+
+prowlarrip=$(sudo nordvpn meshnet peer list | grep -A3 'atlas' | grep IP: | cut -d" " -f2 | sed 's/$/:9696/')
+qbitip=$(sudo nordvpn meshnet peer list | grep -A3 'atlas' | grep IP: | cut -d" " -f2 | sed 's/$/:8765/')
+
+
+if systemctl is-active --quiet prowlarr.service; then
+    echo "prowlarr is running"
+else
+    echo "prowlarr is not running; enabling it..."
+    sudo systemctl start prowlarr.service
+fi
+
+sudo nordvpn c netherlands
+
+echo "Connected to Nordvpn"
+
+sudo qbittorrent-nox --webui-port=8765 -d
+
+echo "Connected to Qbittorrent"
+
+echo "Qbittorent - http://$qbitip"
+echo "Prowlarr   - http://$prowlarrip"
+
+sudo mount -t cifs "//100.120.154.50/Raid_Share" /mnt/share -o username=ashep,password=ashep
+
+echo "SMB share mounted at /mnt/share/"

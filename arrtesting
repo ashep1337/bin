@@ -1,5 +1,17 @@
 #!/bin/bash
 
-if [ "$(sudo virsh list --all | grep debian | awk '{print $3}')" = "shut" ]; then 
-    sudo virsh start debiantesting 
+if ping -c 1 100.124.243.105; then 
+	ssh -i /home/ashep/.ssh/id_ed25519 '100.124.243.105' '/home/ashep/bin/qbitvpn'
+
+	firefox --new-tab  http://100.124.243.105:8765 --new-tab http://100.124.243.105:9696
+	
+	kdialog --title "Server is up" --msgbox "Navigate to your browser to search for media.\nIf your browser did not open copy and paste this link to reach the website\n\n http://100.124.243.105:9696 \n http://100.124.243.105:8765 \n\n Username: ashep \n Password: Our WiFi password" 
+	
+else
+	echo "Server is not up."
+	
+	kdialog --title "SERVER DOWN" --msgbox "Contact your husband to have him fix it." 
 fi
+
+# This pings the server to make sure it is up then it will log in with an ssh key so no password is needed there. It will pop up a message with log in instructions if succesful and a message with instruction to reach administrator if it fails.
+
