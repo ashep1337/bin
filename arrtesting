@@ -3,9 +3,9 @@
 if ping -c 1 100.124.243.105; then 
 	ssh -i /home/ashep/.ssh/id_ed25519 '100.124.243.105' '/home/ashep/bin/qbitvpn'
 
-	firefox --new-tab  http://100.124.243.105:8765 --new-tab http://100.124.243.105:9696
-	
 	kdialog --title "Server is up" --msgbox "Navigate to your browser to search for media.\nIf your browser did not open copy and paste this link to reach the website\n\n http://100.124.243.105:9696 \n http://100.124.243.105:8765 \n\n Username: ashep \n Password: Our WiFi password" 
+
+	firefox --new-tab  http://100.124.243.105:8765 --new-tab http://100.124.243.105:9696
 	
 else
 	echo "Server is not up."
