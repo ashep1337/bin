@@ -1,4 +1,5 @@
 #!/bin/bash
 
-git add * | sleep 2 && git commit -m "automated commit" | sleep 2 && git push origin main
+read -p "Enter your commit message here: " commit
 
+git add * | sleep 2 && git commit -m "$commit" | sleep 2 && git push origin main

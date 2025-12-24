@@ -1,0 +1,4 @@
+#!/bin/bash
+
+python3 /home/ashep/dev/python/week_4/tkinter/pomodoro/main.py &
+disown
