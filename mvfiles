@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ssh -t ashep@100.86.189.13 "sudo /home/ashep/mvfiles.sh"

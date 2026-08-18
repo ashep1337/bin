@@ -1,0 +1,6 @@
+#!/bin/bash
+
+read -p "Enter Message: " text
+
+curl -d "$text" https://ntfy.shephard.cc/Messages >/dev/null 2>&1
+echo "Message sent to "Messages" group."

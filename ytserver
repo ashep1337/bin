@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if pgrep -f "backend/server.py" >/dev/null; then
+
+    echo "Server is running. YT-Downloader should be working"
+
+else
+
+    echo "Starting YT-Downlaoder server"
+    nohup python3 /home/ashep/dev/Youtube-Downloader-GUI/firefox-extension/backend/server.py >/dev/null 2>&1 &
+
+fi

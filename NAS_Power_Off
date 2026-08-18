@@ -1,0 +1,1 @@
+curl -X POST http://10.0.1.3:8123/api/services/switch/turn_off -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzMDFiM2IxNjE5NGQ0Y2NkOGE5ZGQwYjQ3MzYxZDkzMCIsImlhdCI6MTc3ODkwNDU1MSwiZXhwIjoyMDk0MjY0NTUxfQ.CKlnSaeybm5Fuv3LEKqmr3P97XxV77jnLFHYUuf28xo" -H "Content-Type: application/json" -d '{"entity_id": "switch.nas_power_switch_3d_printer_switch"}'

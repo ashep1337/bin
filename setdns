@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+# add-dns.sh — Add an A record to UniFi + Pi-hole simultaneously
+# Usage: ./add-dns.sh <hostname> <ip>
+# Example: ./add-dns.sh myservice.shephard.cc 10.0.1.50
+
+set -euo pipefail
+
+# ─── CONFIG ────────────────────────────────────────────────────────────────────
+UNIFI_HOST="https://10.0.0.1" # Your UniFi controller IP
+UNIFI_SITE="88f7af54-98f8-306a-a1c7-c9349722b1f6"
+PIHOLE_HOST="http://10.0.1.5" # Pi-hole IP
+SECRETS_FILE="${DNS_SECRETS_FILE:-$HOME/bin/secrets.env}"
+
+if [[ ! -r "$SECRETS_FILE" ]]; then
+    echo "Missing or unreadable secrets file: $SECRETS_FILE" >&2
+    exit 1
+fi
+
+# Refuse to run if anyone but the owner can read it
+perms=$(stat -c '%a' "$SECRETS_FILE")
+if [[ "$perms" != "600" && "$perms" != "400" ]]; then
+    echo "Insecure permissions ($perms) on $SECRETS_FILE — run: chmod 600 $SECRETS_FILE" >&2
+    exit 1
+fi
+
+# shellcheck source=/dev/null
+source "$SECRETS_FILE"
+
+: "${UNIFI_API_KEY:?not set in $SECRETS_FILE}"
+: "${PIHOLE_PASSWORD:?not set in $SECRETS_FILE}"
+# ───────────────────────────────────────────────────────────────────────────────
+
+HOSTNAME="$1"
+IP="$2"
+
+if [[ -z "$HOSTNAME" || -z "$IP" ]]; then
+    echo "Usage: $0 <hostname> <ip>"
+    exit 1
+fi
+
+echo "➤ Adding DNS record: $HOSTNAME → $IP"
+
+# ── 1. UNIFI ──────────────────────────────────────────────────────────────────
+# Uses the Integration API (Network 9+). For older Network versions, see note below.
+echo ""
+echo "[UniFi] Adding record..."
+
+UNIFI_RESPONSE=$(
+    curl -sk \
+        -X POST \
+        -H "X-API-KEY: ${UNIFI_API_KEY}" \
+        -H "Content-Type: application/json" \
+        -d "{\"record_type\": \"A\", \"key\": \"${HOSTNAME}\", \"value\": \"${IP}\", \"enabled\": true, \"port\": 0, \"priority\": 0, \"weight\": 0, \"ttl\": 0}" \
+        "${UNIFI_HOST}/proxy/network/v2/api/site/default/static-dns"
+)
+
+echo "[UniFi] Response: $UNIFI_RESPONSE"
+
+# ── 2. PI-HOLE (v6 API) ───────────────────────────────────────────────────────
+echo ""
+echo "[Pi-hole] Authenticating..."
+
+AUTH_RESPONSE=$(
+    curl -s \
+        -X POST \
+        -H "Content-Type: application/json" \
+        -d "{\"password\": \"${PIHOLE_PASSWORD}\"}" \
+        "${PIHOLE_HOST}/api/auth"
+)
+
+SID=$(echo "$AUTH_RESPONSE" | grep -o '"sid":"[^"]*"' | cut -d'"' -f4)
+CSRF=$(echo "$AUTH_RESPONSE" | grep -o '"csrf":"[^"]*"' | cut -d'"' -f4)
+
+if [[ -z "$SID" ]]; then
+    echo "[Pi-hole] Auth failed. Check password."
+    exit 1
+fi
+
+echo "[Pi-hole] Adding record..."
+
+ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote('${IP} ${HOSTNAME}'))")
+
+PIHOLE_RESPONSE=$(
+    curl -s \
+        -X PUT \
+        -H "X-CSRF-Token: ${CSRF}" \
+        -b "SID=${SID}" \
+        "${PIHOLE_HOST}/api/config/dns/hosts/${ENCODED}"
+)
+
+echo "[Pi-hole] Response: $PIHOLE_RESPONSE"
+
+echo ""
+echo "✓ Done. Verify with: dig ${HOSTNAME} @${PIHOLE_HOST#http://}"

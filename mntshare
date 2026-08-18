@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sudo mount -t cifs //192.168.1.36/Raid_Share ~/Share -o username=ashep

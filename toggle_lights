@@ -1,0 +1,2 @@
+curl -X POST "http://10.0.187.37/json/state" -d '{"on":"t"}' -H "Content-Type: application/json"
+

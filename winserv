@@ -1,0 +1,1 @@
+xfreerdp3 /v:192.168.1.98 /u:Administrator /f /dynamic-resolution

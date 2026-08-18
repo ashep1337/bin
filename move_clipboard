@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# launch app
+quickshell -c ~/.config/quickshell/clipboard &
+
+# window title we expect
+TITLE="Clipboard"
+
+# wait until window exists
+for i in {1..20}; do
+    WIN=$(hyprctl clients -j | jq -r ".[] | select(.title==\"$TITLE\") | .address")
+
+    if [ -n "$WIN" ] && [ "$WIN" != "null" ]; then
+        break
+    fi
+
+    sleep 0.05
+done
+
+# get monitor size
+read SW SH <<<$(hyprctl monitors -j | jq -r '.[] | select(.focused==true) | "\(.width) \(.height)"')
+
+W=720
+H=760
+
+X=$((SW - W - 20))
+Y=$((SH - H - 50))
+
+# move window
+hyprctl dispatch movewindowpixel exact $X $Y

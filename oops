@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sudo faillock --user ashep --reset

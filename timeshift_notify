@@ -1,0 +1,9 @@
+#!/bin/bash
+
+URL="https://uptime.shephard.cc/api/push/vrCi3TzLlI"
+
+if /usr/bin/timeshift --create --tags D --scripted; then
+    /usr/bin/curl -s "$URL?status=up&msg=Snapshot+OK"
+else
+    /usr/bin/curl -s "$URL?status=down&msg=Timeshift+failed"
+fi

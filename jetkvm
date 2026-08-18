@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [[ "$(awk NR==26 /home/ashep/.config/hypr/hyprland.conf)" == "monitor=HDMI-A-1, preferred, 0x360, 1, mirror, DP-1" ]]; then
+
+    sed -i '26s/monitor=HDMI-A-1, preferred, 0x360, 1, mirror, DP-1/monitor=HDMI-A-1, preferred, 0x360, 1/' /home/ashep/.config/hypr/hyprland.conf
+    echo "Screen duplication off"
+
+elif [[ "$(awk NR==26 /home/ashep/.config/hypr/hyprland.conf)" == "monitor=HDMI-A-1, preferred, 0x360, 1" ]]; then
+
+    sed -i '26s/monitor=HDMI-A-1, preferred, 0x360, 1/monitor=HDMI-A-1, preferred, 0x360, 1, mirror, DP-1/' /home/ashep/.config/hypr/hyprland.conf
+    echo "Screen duplication on"
+fi
+
+pkill waybar
+waybar >/dev/null 2>&1 &
+disown
+
+# This command is to toggle on screen duplication so I just use my JetKVM correctly
