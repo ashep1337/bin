@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# copy_compose_files.sh
+# Copies docker-compose files from /home/ashep/Docker/<container>/ to a destination
+# directory, renaming each to <container>_docker-compose.yaml
+
+set -euo pipefail
+
+DOCKER_DIR="${1:-/home/ashep/Docker}"
+DEST_DIR="${2:-/home/ashep/compose-backup}"
+
+# ── Validation ──────────────────────────────────────────────────────────────
+if [[ ! -d "$DOCKER_DIR" ]]; then
+    echo "ERROR: Source directory not found: $DOCKER_DIR" >&2
+    exit 1
+fi
+
+mkdir -p "$DEST_DIR"
+
+# ── Main loop ────────────────────────────────────────────────────────────────
+copied=0
+skipped=0
+
+while IFS= read -r -d '' compose_file; do
+    container_name="$(basename "$(dirname "$compose_file")")"
+    filename="$(basename "$compose_file")"
+
+    # Preserve original extension (.yml or .yaml)
+    ext="${filename##*.}"
+    dest_file="$DEST_DIR/${container_name}_docker-compose.${ext}"
+
+    if [[ -e "$dest_file" ]]; then
+        echo "SKIP (already exists): $dest_file"
+        skipped=$((skipped + 1))
+        continue
+    fi
+
+    cp "$compose_file" "$dest_file"
+    echo "COPIED: $compose_file  →  $dest_file"
+    copied=$((copied + 1))
+
+done < <(find "$DOCKER_DIR" -mindepth 2 -maxdepth 2 \
+    \( -name "docker-compose.yaml" -o -name "docker-compose.yml" \) \
+    -print0)
+
+# ── Summary ──────────────────────────────────────────────────────────────────
+echo ""
+echo "Done. Copied: $copied  |  Skipped (already existed): $skipped"
+echo "Files written to: $DEST_DIR"
